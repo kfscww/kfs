@@ -1,0 +1,666 @@
+﻿<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابة اعتماد مدربي شركة مياه الشرب بكفر الشيخ (2027-2029)</title>
+    <!-- Tailwind CSS & FontAwesome -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- SheetJS & QRCode JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        @media print {
+            body * { visibility: hidden; }
+            #printableReceipt, #printableReceipt * { visibility: visible; }
+            #printableReceipt { position: absolute; left: 0; top: 0; width: 100%; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen">
+
+    <!-- Header / Navbar -->
+    <header class="bg-gradient-to-r from-blue-900 via-blue-800 to-indigo-900 text-white shadow-xl no-print">
+        <div class="max-w-7xl mx-auto px-4 py-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4 text-center md:text-right">
+                <div class="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center text-3xl border border-white/20 shadow-inner">
+                    <i class="fa-solid fa-droplet text-blue-300"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl md:text-2xl font-bold tracking-wide">شركة مياه الشرب والصرف الصحي بكفر الشيخ</h1>
+                    <p class="text-blue-200 text-sm font-semibold">الإدارة العامة للتدريب - بوابـة اعتمـاد المـدربين (2027 - 2029)</p>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button onclick="switchTab('register')" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold text-sm transition-all shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-file-pen"></i> نموذج التسجيل
+                </button>
+                <button onclick="switchTab('admin')" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl font-bold text-sm transition-all flex items-center gap-2">
+                    <i class="fa-solid fa-chart-line"></i> لوحة المتابعة والتصدير
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-5xl mx-auto px-4 py-8 no-print">
+
+        <!-- Announcement Banner -->
+        <div class="bg-blue-50 border-r-4 border-blue-600 p-5 rounded-xl shadow-sm mb-8 flex items-start gap-4">
+            <div class="text-blue-600 text-2xl mt-1"><i class="fa-solid fa-circle-info"></i></div>
+            <div>
+                <h3 class="font-bold text-blue-900 text-lg">إعلان بدء استقبال طلبات اعتماد المدربين (2027 - 2029)</h3>
+                <p class="text-slate-600 text-sm mt-1 leading-relaxed">
+                    يرجى ملء البيانات الأساسية بدقة واختيار الوظيفة الحالية والفرع، ثم تحديد المسمى الوظيفي المستهدف والدرجة لاستعراض المواد التدريبية المقررة طبقا لشروط وشيت الحد الأدنى.
+                </p>
+            </div>
+        </div>
+
+        <!-- Registration Form Section -->
+        <div id="registerSection" class="glass-card rounded-2xl shadow-xl border border-slate-200/80 overflow-hidden">
+            <div class="bg-slate-800 text-white px-6 py-4 flex justify-between items-center">
+                <h2 class="text-lg font-bold flex items-center gap-2">
+                    <i class="fa-solid fa-clipboard-list text-blue-400"></i> نموذج استمارة التقديم
+                </h2>
+                <span class="text-xs bg-blue-500/30 text-blue-300 px-3 py-1 rounded-full border border-blue-400/30">بيانات التقديم</span>
+            </div>
+
+            <form id="trainerForm" onsubmit="handleFormSubmit(event)" class="p-6 md:p-8 space-y-8">
+                
+                <!-- Personal Info Grid -->
+                <div>
+                    <h3 class="text-base font-bold text-blue-900 pb-2 mb-4 border-b border-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-id-card text-blue-600"></i> أولاً: البيانات الشخصية والإدارية
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">الاسم ثلاثي / الرباعي <span class="text-red-500">*</span></label>
+                            <input type="text" id="fullName" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="أدخل الاسم بالكامل">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">الرقم القومي (14 رقم) <span class="text-red-500">*</span></label>
+                            <input type="text" id="nationalId" maxlength="14" pattern="[0-9]{14}" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="الرقم القومي المكون من 14 رقم">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">الكود الوظيفي / رقم الملف <span class="text-red-500">*</span></label>
+                            <input type="text" id="employeeCode" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="أدخل الكود الوظيفي">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">رقم الهاتف / الواتساب <span class="text-red-500">*</span></label>
+                            <input type="tel" id="phoneNumber" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="01xxxxxxxx">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">المنطقة / الفرع التابع له <span class="text-red-500">*</span></label>
+                            <select id="branchArea" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition bg-white">
+                                <option value="">-- اختر الفرع / المنطقة --</option>
+                                <option value="المقر الرئيسي">المقر الرئيسي</option>
+                                <option value="كفر الشيخ">منطقة كفر الشيخ</option>
+                                <option value="دسوق">منطقة دسوق</option>
+                                <option value="سيدي سالم">منطقة سيدي سالم</option>
+                                <option value="بيلا">منطقة بيلا</option>
+                                <option value="الرياض">منطقة الرياض</option>
+                                <option value="الحامول">منطقة الحامول</option>
+                                <option value="قلين">منطقة قلين</option>
+                                <option value="مطوبس">منطقة مطوبس</option>
+                                <option value="فوه">منطقة فوه</option>
+                                <option value="بلطيم">منطقة بلطيم</option>
+                                <option value="سيدي غازي">منطقة سيدي غازي</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">الوظيفة الحالية للمتقدم <span class="text-red-500">*</span></label>
+                            <input type="text" id="currentJobTitle" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="مثال: أخصائي تدريب / مهندس...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Job Path Selection Grid -->
+                <div>
+                    <h3 class="text-base font-bold text-blue-900 pb-2 mb-4 border-b border-slate-200 flex items-center gap-2">
+                        <i class="fa-solid fa-user-gear text-blue-600"></i> ثانياً: التخصص المطلوب للاعتماد
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 bg-slate-50 p-5 rounded-xl border border-slate-200">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">المسمى الوظيفي المستهدف للاعتماد <span class="text-red-500">*</span></label>
+                            <select id="targetJobTitle" onchange="onJobTitleChange()" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition bg-white font-semibold text-blue-900">
+                                <option value="">-- اختر المسمى الوظيفي --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">الدرجة الوظيفية للمادة <span class="text-red-500">*</span></label>
+                            <select id="jobDegree" onchange="onDegreeChange()" required disabled class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition bg-slate-100 font-semibold">
+                                <option value="">-- اختر الدرجة --</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Courses Selection Grid -->
+                <div id="coursesContainer" class="hidden">
+                    <h3 class="text-base font-bold text-blue-900 pb-2 mb-4 border-b border-slate-200 flex items-center justify-between">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-book-open text-blue-600"></i> ثالثاً: حدد المواد التدريبية المقررة</span>
+                        <span id="selectedCountBadge" class="text-xs bg-blue-100 text-blue-800 px-3 py-1 rounded-full font-bold">تم اختيار 0 مواد</span>
+                    </h3>
+                    <div class="overflow-x-auto rounded-xl border border-slate-200">
+                        <table class="w-full text-right text-sm">
+                            <thead class="bg-slate-800 text-slate-100 text-xs">
+                                <tr>
+                                    <th class="p-3 text-center">اختيار</th>
+                                    <th class="p-3">اسم المادة التدريبية</th>
+                                    <th class="p-3 text-center">كود المادة</th>
+                                    <th class="p-3 text-center">المرحلة</th>
+                                    <th class="p-3">ملاحظات وشروط</th>
+                                </tr>
+                            </thead>
+                            <tbody id="coursesTableBody" class="divide-y divide-slate-200 bg-white">
+                                <!-- Dynamic Render -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="pt-4 border-t border-slate-200 flex justify-end">
+                    <button type="submit" class="px-8 py-3.5 bg-gradient-to-r from-blue-700 to-indigo-700 hover:from-blue-600 hover:to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all flex items-center gap-2 text-base">
+                        <i class="fa-solid fa-paper-plane"></i> تقديم طلب الاعتماد واستخراج الإيصال
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <!-- Receipt Section -->
+        <div id="receiptContainer" class="hidden space-y-6">
+            <div class="flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
+                <button onclick="switchTab('register')" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-right"></i> العودة للنموذج
+                </button>
+                <button onclick="window.print()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-print"></i> طباعة الإيصال الرسمي (A4)
+                </button>
+            </div>
+
+            <div id="printableReceipt" class="bg-white p-8 rounded-2xl shadow-xl border border-slate-300 max-w-4xl mx-auto text-slate-800">
+                <div class="flex justify-between items-center border-b-2 border-blue-900 pb-6 mb-6">
+                    <div class="text-right">
+                        <h2 class="text-lg font-bold text-blue-950">شركة مياه الشرب والصرف الصحي بكفر الشيخ</h2>
+                        <p class="text-xs font-bold text-slate-600">قطاع الموارد البشرية - الإدارة العامة للتدريب</p>
+                        <p class="text-xs text-blue-800 font-semibold mt-1">استمارة تسجيل اعتماد مدرب (2027 - 2029)</p>
+                    </div>
+                    <div class="text-center">
+                        <div id="qrcode" class="w-20 h-20 bg-slate-100 border p-1 rounded-lg flex items-center justify-center"></div>
+                        <span class="text-[10px] text-slate-500 mt-1 block">رمز التوثيق</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 text-xs mb-6 bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <div><span class="font-bold text-slate-500">اسم المتقدم:</span> <span id="rName" class="font-bold text-slate-900 text-sm"></span></div>
+                    <div><span class="font-bold text-slate-500">الرقم القومي:</span> <span id="rNationalId" class="font-bold"></span></div>
+                    <div><span class="font-bold text-slate-500">الكود الوظيفي:</span> <span id="rCode" class="font-bold"></span></div>
+                    <div><span class="font-bold text-slate-500">رقم الهاتف:</span> <span id="rPhone"></span></div>
+                    <div><span class="font-bold text-slate-500">الفرع / المنطقة:</span> <span id="rBranch" class="font-bold text-blue-900"></span></div>
+                    <div><span class="font-bold text-slate-500">الوظيفة الحالية:</span> <span id="rCurrentJob" class="font-bold text-emerald-800"></span></div>
+                    <div><span class="font-bold text-slate-500">المسمى المستهدف:</span> <span id="rTargetJob" class="font-bold text-blue-900"></span></div>
+                    <div><span class="font-bold text-slate-500">الدرجة الوظيفية للمادة:</span> <span id="rDegree" class="font-bold"></span></div>
+                </div>
+
+                <div class="mb-8">
+                    <h4 class="font-bold text-xs text-slate-700 mb-2 border-b pb-1">المواد التدريبية المسجلة للاعتماد:</h4>
+                    <table class="w-full text-right text-xs border border-slate-300">
+                        <thead class="bg-slate-100 text-slate-700 font-bold border-b">
+                            <tr>
+                                <th class="p-2 border-l text-center">م</th>
+                                <th class="p-2 border-l">اسم المادة التدريبية</th>
+                                <th class="p-2 border-l text-center">كود المادة</th>
+                                <th class="p-2 border-l text-center">المرحلة</th>
+                                <th class="p-2">ملاحظات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="rCoursesTable" class="divide-y divide-slate-200">
+                            <!-- Dynamic Courses -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="grid grid-cols-3 gap-4 text-center text-xs pt-8 border-t border-slate-300 mt-12">
+                    <div>
+                        <p class="font-bold text-slate-700 mb-8">المتقدم بالطلب</p>
+                        <p class="text-slate-400">...........................</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-700 mb-8">مسئول التدريب بالفرع</p>
+                        <p class="text-slate-400">...........................</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-slate-700 mb-8">مدير عام التدريب</p>
+                        <p class="font-bold text-blue-900">الأستاذ / علاء مبارك</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="adminSection" class="hidden glass-card rounded-2xl shadow-xl border border-slate-200 p-6 md:p-8 space-y-6">
+            <div class="flex justify-between items-center border-b pb-4">
+                <div>
+                    <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-blue-600"></i> لوحة الإدارة ومتابعة طلبات الاعتماد
+                    </h2>
+                    <p class="text-xs text-slate-500">معاينة وتصدير البيانات لشيت Excel وحماية الحذف/التعديل بكلمة المرور</p>
+                </div>
+                <button onclick="exportToExcel()" class="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold transition shadow-md flex items-center gap-2">
+                    <i class="fa-solid fa-file-excel text-sm"></i> تصدير البيانات لشيت Excel (.xlsx)
+                </button>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl">
+                    <span class="text-xs font-bold text-blue-600">إجمالي المتقدمين</span>
+                    <h3 id="statTotalApplicants" class="text-2xl font-black text-blue-950 mt-1">0</h3>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-200 p-4 rounded-xl">
+                    <span class="text-xs font-bold text-emerald-600">المواد المسجلة</span>
+                    <h3 id="statTotalCourses" class="text-2xl font-black text-emerald-950 mt-1">0</h3>
+                </div>
+                <div class="bg-indigo-50 border border-indigo-200 p-4 rounded-xl">
+                    <span class="text-xs font-bold text-indigo-600">المناطق النشطة</span>
+                    <h3 id="statActiveBranches" class="text-2xl font-black text-indigo-950 mt-1">0</h3>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200">
+                <table class="w-full text-right text-xs">
+                    <thead class="bg-slate-800 text-white">
+                        <tr>
+                            <th class="p-3">#</th>
+                            <th class="p-3">الاسم</th>
+                            <th class="p-3">الكود</th>
+                            <th class="p-3">الوظيفة الحالية</th>
+                            <th class="p-3">الفرع</th>
+                            <th class="p-3">المسمى المستهدف</th>
+                            <th class="p-3 text-center">عدد المواد</th>
+                            <th class="p-3 text-center">العمليات (محمي)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminTableBody" class="divide-y divide-slate-200 bg-white">
+                        <!-- Dynamic Records -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        const database = {
+            "اخصائى تدريب": {
+                "الدرجة الثالثة": [
+                    { name: "الاحتياجات التدريبية", code: "120201", stage: "A", notes: "" },
+                    { name: "جودة التدريب", code: "120202", stage: "A", notes: "" },
+                    { name: "تنفيذ التدريب", code: "120203", stage: "B", notes: "" },
+                    { name: "التوثيق الفوتوغرافي", code: "120204", stage: "B", notes: "" }
+                ],
+                "الدرجة الثانية": [
+                    { name: "مؤشرات الاداء والنتائج", code: "120301", stage: "A", notes: "" },
+                    { name: "ROI", code: "120302", stage: "B", notes: "" }
+                ],
+                "الدرجة الأولى": [
+                    { name: "عمليات الإدارة", code: "MA0101", stage: "M", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B" },
+                    { name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", stage: "M", notes: "" }
+                ]
+            },
+            "مهندس تشغيل مياه": {
+                "الدرجة الثالثة": [
+                    { name: "التشغيل القياسي لمحطات الشرب", code: "010202", stage: "A", notes: "" },
+                    { name: "صيانة الشبكات", code: "010205", stage: "A", notes: "" },
+                    { name: "الفحص الظاهرى", code: "010209", stage: "A", notes: "" },
+                    { name: "اقتصاديات التشغيل", code: "010211", stage: "B", notes: "" },
+                    { name: "وحدات المياه النقالى", code: "010213", stage: "B", notes: "" },
+                    { name: "وصف مشاكل التشغيل", code: "010214", stage: "B", notes: "" }
+                ],
+                "الدرجة الثانية": [
+                    { name: "اجهزه القياس", code: "010301", stage: "A", notes: "" },
+                    { name: "تكنولوجيا معالجة المياه الجوفية", code: "010302", stage: "A", notes: "" },
+                    { name: "ادارة المياه غير المحاسب عليها وتقليل الفاقد", code: "010306", stage: "B", notes: "" },
+                    { name: "تقييم المعدات الكهرو ميكانيكية", code: "010303", stage: "B", notes: "" },
+                    { name: "SCADA", code: "010304", stage: "B", notes: "" }
+                ],
+                "الدرجة الأولى": [
+                    { name: "عمليات الإدارة", code: "MA0101", stage: "M", notes: "" },
+                    { name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", stage: "M", notes: "" }
+                ]
+            },
+            "كيميائي مياه": {
+                "الدرجة الثالثة": [
+                    { name: "Water Treatment Technologies", code: "090201", stage: "A", notes: "" },
+                    { name: "تجارب التشغيل", code: "090202", stage: "A", notes: "" },
+                    { name: "Physical and Chemical Analysis", code: "090205", stage: "A", notes: "" },
+                    { name: "Bacteriology", code: "090105", stage: "B", notes: "" }
+                ],
+                "الدرجة الثانية": [
+                    { name: "Water Treatment Solving Problems", code: "090301", stage: "A", notes: "65%" },
+                    { name: "GLP in water treatment plants", code: "090302", stage: "A", notes: "35%" }
+                ],
+                "الدرجة الأولى": [
+                    { name: "عمليات الإدارة", code: "MA0101", stage: "M", notes: "" }
+                ]
+            },
+            "فنى تشغيل مياه": {
+                "الدرجة الرابعة": [
+                    { name: "أساليب التعامل مع الكيماويات", code: "230301", stage: "v2", notes: "من الدرجة الثالثة" },
+                    { name: "التشغيل القياسي لمحطات مياه الشرب", code: "230203", stage: "", notes: "" }
+                ],
+                "الدرجة الثالثة": [
+                    { name: "مشاكل التشغيل", code: "230302", stage: "v2", notes: "" }
+                ],
+                "الدرجة الثانية": [
+                    { name: "الفاقد والتسرب", code: "230402", stage: "v2", notes: "" }
+                ]
+            }
+        };
+
+        const remainingTitles = [
+            "مهندس تشغيل صرف", "مهندس صيانه كهربائية", "مهندس صيانه ميكانيكية", "مهندس مشروعات", "مهندس تخطيط و تطوير", 
+            "اخصائي GIS", "كيميائى صرف", "اخصائى موارد بشرية وادارية", "اخصائى خدمه عملاء ومشتركين", 
+            "أخصائي زراعي", "سكرتير تنفيذي", "أخصائي علاقات عامة وتوعية", "أخصائي امن", "أخصائي سلامة وصحة مهنية",
+            "محاسب مالى", "محاسب تجارى", "مهندس تحلية", "كيميائي تحلية", "اخصائي تحليل بيانات", "فنى تشغيل صرف", "فني مشروعات", 
+            "فني مساحه", "فنى صيانة ميكانيكا", "فنى صيانة كهرباء", "فني حملة", "فنى عدادات", 
+            "فنى سلامة وصحة مهنية", "أمين مخزن", "فني معمل مياه", "فنى معمل صرف", "فنى زراعى", 
+            "سكرتارية", "كاتب ومدخل بيانات", "مراقب امن", "امين خزينة", "قارئ ومحصل"
+        ];
+
+        remainingTitles.forEach(title => {
+            if (!database[title]) {
+                database[title] = {
+                    "الدرجة الثالثة": [
+                        { name: `أساسيات وتطبيقات ${title}`, code: "GEN01", stage: "A", notes: "" },
+                        { name: "معايير السلامة والجودة التخصصية", code: "GEN02", stage: "B", notes: "" }
+                    ],
+                    "الدرجة الثانية": [
+                        { name: `التشغيل المتقدم في ${title}`, code: "GEN03", stage: "A", notes: "" }
+                    ],
+                    "الدرجة الأولى": [
+                        { name: "عمليات الإدارة والقيادة", code: "MA0101", stage: "M", notes: "" }
+                    ]
+                };
+            }
+        });
+
+        let currentSelectedCourses = [];
+
+        document.addEventListener("DOMContentLoaded", () => {
+            initJobTitlesDropdown();
+            loadAdminData();
+        });
+
+        function initJobTitlesDropdown() {
+            const select = document.getElementById("targetJobTitle");
+            select.innerHTML = '<option value="">-- اختر المسمى الوظيفي (44 مسمى متاح) --</option>';
+            Object.keys(database).sort().forEach(job => {
+                const opt = document.createElement("option");
+                opt.value = job;
+                opt.textContent = job;
+                select.appendChild(opt);
+            });
+        }
+
+        function onJobTitleChange() {
+            const selectedJob = document.getElementById("targetJobTitle").value;
+            const degreeSelect = document.getElementById("jobDegree");
+            degreeSelect.innerHTML = '<option value="">-- اختر الدرجة الوظيفية --</option>';
+            document.getElementById("coursesContainer").classList.add("hidden");
+
+            if (selectedJob && database[selectedJob]) {
+                degreeSelect.disabled = false;
+                degreeSelect.classList.remove("bg-slate-100");
+                degreeSelect.classList.add("bg-white");
+
+                Object.keys(database[selectedJob]).forEach(degree => {
+                    const opt = document.createElement("option");
+                    opt.value = degree;
+                    opt.textContent = degree;
+                    degreeSelect.appendChild(opt);
+                });
+            } else {
+                degreeSelect.disabled = true;
+                degreeSelect.classList.add("bg-slate-100");
+            }
+        }
+
+        function onDegreeChange() {
+            const selectedJob = document.getElementById("targetJobTitle").value;
+            const selectedDegree = document.getElementById("jobDegree").value;
+            const coursesContainer = document.getElementById("coursesContainer");
+            const tbody = document.getElementById("coursesTableBody");
+
+            tbody.innerHTML = "";
+            currentSelectedCourses = [];
+            updateSelectedBadge();
+
+            if (selectedJob && selectedDegree && database[selectedJob][selectedDegree]) {
+                coursesContainer.classList.remove("hidden");
+                const courses = database[selectedJob][selectedDegree];
+
+                courses.forEach((c) => {
+                    const tr = document.createElement("tr");
+                    tr.className = "hover:bg-blue-50/50 transition";
+                    tr.innerHTML = `
+                        <td class="p-3 text-center">
+                            <input type="checkbox" onchange="toggleCourseSelection('${c.name}', '${c.code}', '${c.stage}', '${c.notes}', this)" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500">
+                        </td>
+                        <td class="p-3 font-semibold text-slate-800">${c.name}</td>
+                        <td class="p-3 text-center font-mono text-blue-800 font-bold bg-slate-50">${c.code || '-'}</td>
+                        <td class="p-3 text-center"><span class="px-2 py-0.5 bg-slate-200 text-slate-700 text-xs rounded font-bold">${c.stage || 'General'}</span></td>
+                        <td class="p-3 text-slate-500 text-xs">${c.notes || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                coursesContainer.classList.add("hidden");
+            }
+        }
+
+        function toggleCourseSelection(name, code, stage, notes, el) {
+            if (el.checked) {
+                currentSelectedCourses.push({ name, code, stage, notes });
+            } else {
+                currentSelectedCourses = currentSelectedCourses.filter(c => c.code !== code || c.name !== name);
+            }
+            updateSelectedBadge();
+        }
+
+        function updateSelectedBadge() {
+            document.getElementById("selectedCountBadge").textContent = `تم اختيار ${currentSelectedCourses.length} مواد`;
+        }
+
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            if (currentSelectedCourses.length === 0) {
+                alert("يرجى اختيار مادة تدريبية واحدة على الأقل للاعتماد!");
+                return;
+            }
+
+            const formData = {
+                id: Date.now(),
+                fullName: document.getElementById("fullName").value,
+                nationalId: document.getElementById("nationalId").value,
+                employeeCode: document.getElementById("employeeCode").value,
+                phoneNumber: document.getElementById("phoneNumber").value,
+                branchArea: document.getElementById("branchArea").value,
+                currentJobTitle: document.getElementById("currentJobTitle").value,
+                targetJobTitle: document.getElementById("targetJobTitle").value,
+                jobDegree: document.getElementById("jobDegree").value,
+                courses: currentSelectedCourses,
+                date: new Date().toLocaleDateString('ar-EG')
+            };
+
+            let applicants = JSON.parse(localStorage.getItem("applicantsData") || "[]");
+            applicants.push(formData);
+            localStorage.setItem("applicantsData", JSON.stringify(applicants));
+
+            renderReceipt(formData);
+            switchTab("receipt");
+        }
+
+        function renderReceipt(data) {
+            document.getElementById("rName").textContent = data.fullName;
+            document.getElementById("rNationalId").textContent = data.nationalId;
+            document.getElementById("rCode").textContent = data.employeeCode;
+            document.getElementById("rPhone").textContent = data.phoneNumber;
+            document.getElementById("rBranch").textContent = data.branchArea;
+            document.getElementById("rCurrentJob").textContent = data.currentJobTitle;
+            document.getElementById("rTargetJob").textContent = data.targetJobTitle;
+            document.getElementById("rDegree").textContent = data.jobDegree;
+
+            const tbody = document.getElementById("rCoursesTable");
+            tbody.innerHTML = "";
+            data.courses.forEach((c, idx) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td class="p-2 border-l text-center font-bold">${idx + 1}</td>
+                    <td class="p-2 border-l font-bold">${c.name}</td>
+                    <td class="p-2 border-l text-center font-mono">${c.code || '-'}</td>
+                    <td class="p-2 border-l text-center">${c.stage || '-'}</td>
+                    <td class="p-2">${c.notes || '-'}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            const qrContainer = document.getElementById("qrcode");
+            qrContainer.innerHTML = "";
+            new QRCode(qrContainer, {
+                text: `KHCWW-TRAIN-${data.employeeCode}-${data.nationalId}`,
+                width: 70,
+                height: 70
+            });
+        }
+
+        function loadAdminData() {
+            const applicants = JSON.parse(localStorage.getItem("applicantsData") || "[]");
+            document.getElementById("statTotalApplicants").textContent = applicants.length;
+
+            let courseCount = 0;
+            let branches = new Set();
+            applicants.forEach(a => {
+                courseCount += (a.courses ? a.courses.length : 0);
+                if (a.branchArea) branches.add(a.branchArea);
+            });
+
+            document.getElementById("statTotalCourses").textContent = courseCount;
+            document.getElementById("statActiveBranches").textContent = branches.size;
+
+            const tbody = document.getElementById("adminTableBody");
+            tbody.innerHTML = "";
+            applicants.forEach((a, idx) => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-slate-50";
+                tr.innerHTML = `
+                    <td class="p-3 font-bold">${idx + 1}</td>
+                    <td class="p-3 font-semibold text-blue-900">${a.fullName}</td>
+                    <td class="p-3 font-mono">${a.employeeCode}</td>
+                    <td class="p-3">${a.currentJobTitle}</td>
+                    <td class="p-3">${a.branchArea}</td>
+                    <td class="p-3">${a.targetJobTitle}</td>
+                    <td class="p-3 text-center font-bold text-emerald-700">${a.courses ? a.courses.length : 0}</td>
+                    <td class="p-3 text-center space-x-1 space-x-reverse">
+                        <button onclick="editApplicantWithAuth(${a.id})" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded text-[10px] font-bold">تعديل</button>
+                        <button onclick="deleteApplicantWithAuth(${a.id})" class="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-[10px] font-bold">حذف</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function checkAdminPass() {
+            const pass = prompt("العملية محمية! أدخل كلمة المرور للتأكيد:");
+            return (pass === "alaa123" || pass === "123علاء123");
+        }
+
+        function deleteApplicantWithAuth(id) {
+            if (checkAdminPass()) {
+                let applicants = JSON.parse(localStorage.getItem("applicantsData") || "[]");
+                applicants = applicants.filter(a => a.id !== id);
+                localStorage.setItem("applicantsData", JSON.stringify(applicants));
+                loadAdminData();
+                alert("تم حذف الطلب بنجاح.");
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        function editApplicantWithAuth(id) {
+            if (checkAdminPass()) {
+                let applicants = JSON.parse(localStorage.getItem("applicantsData") || "[]");
+                const item = applicants.find(a => a.id === id);
+                if (item) {
+                    const newName = prompt("تعديل اسم المتقدم:", item.fullName);
+                    if (newName) {
+                        item.fullName = newName;
+                        localStorage.setItem("applicantsData", JSON.stringify(applicants));
+                        loadAdminData();
+                        alert("تم التعديل بنجاح.");
+                    }
+                }
+            } else {
+                alert("كلمة المرور غير صحيحة!");
+            }
+        }
+
+        function exportToExcel() {
+            const applicants = JSON.parse(localStorage.getItem("applicantsData") || "[]");
+            if (applicants.length === 0) {
+                alert("لا توجد بيانات مسجلة حالياً للتصدير!");
+                return;
+            }
+
+            const excelRows = [];
+            applicants.forEach(a => {
+                if (a.courses && a.courses.length > 0) {
+                    a.courses.forEach(c => {
+                        excelRows.push({
+                            "الاسم الكامل": a.fullName,
+                            "الرقم القومي": a.nationalId,
+                            "الكود الوظيفي": a.employeeCode,
+                            "رقم الهاتف": a.phoneNumber,
+                            "الفرع / المنطقة": a.branchArea,
+                            "الوظيفة الحالية": a.currentJobTitle,
+                            "المسمى الوظيفي المستهدف": a.targetJobTitle,
+                            "الدرجة الوظيفية للمادة": a.jobDegree,
+                            "اسم المادة التدريبية": c.name,
+                            "كود المادة": c.code,
+                            "المرحلة": c.stage,
+                            "ملاحظات": c.notes,
+                            "تاريخ التسجيل": a.date
+                        });
+                    });
+                }
+            });
+
+            const worksheet = XLSX.utils.json_to_sheet(excelRows);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "طلبات اعتماد المدربين");
+            XLSX.writeFile(workbook, "اعتماد_المدربين_كفر_الشيخ_2027_2029.xlsx");
+        }
+
+        function switchTab(tab) {
+            document.getElementById("registerSection").classList.add("hidden");
+            document.getElementById("receiptContainer").classList.add("hidden");
+            document.getElementById("adminSection").classList.add("hidden");
+
+            if (tab === "register") document.getElementById("registerSection").classList.remove("hidden");
+            if (tab === "receipt") document.getElementById("receiptContainer").classList.remove("hidden");
+            if (tab === "admin") {
+                loadAdminData();
+                document.getElementById("adminSection").classList.remove("hidden");
+            }
+        }
+    </script>
+</body>
+</html>
