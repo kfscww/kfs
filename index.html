@@ -159,6 +159,7 @@
                                     <th class="p-3 text-center">اختيار</th>
                                     <th class="p-3">اسم المادة التدريبية</th>
                                     <th class="p-3 text-center">كود المادة</th>
+                                    <th class="p-3 text-center">V</th>
                                     <th class="p-3 text-center">المرحلة</th>
                                     <th class="p-3">ملاحظات وشروط</th>
                                 </tr>
@@ -225,6 +226,7 @@
                                 <th class="p-2 border-l text-center">م</th>
                                 <th class="p-2 border-l">اسم المادة التدريبية</th>
                                 <th class="p-2 border-l text-center">كود المادة</th>
+                                <th class="p-2 border-l text-center">V</th>
                                 <th class="p-2 border-l text-center">المرحلة</th>
                                 <th class="p-2">ملاحظات</th>
                             </tr>
@@ -331,99 +333,684 @@
     </main>
 
     <script>
+        // المصدر: ملف "الحد الأدنى للمناهج الفنية والإدارية للوظائف التكرارية" (يناير 2027 - ديسمبر 2029)
         const database = {
-            "اخصائى تدريب": {
-                "الدرجة الثالثة": [
-                    { name: "الاحتياجات التدريبية", code: "120201", stage: "A", notes: "" },
-                    { name: "جودة التدريب", code: "120202", stage: "A", notes: "" },
-                    { name: "تنفيذ التدريب", code: "120203", stage: "B", notes: "" },
-                    { name: "التوثيق الفوتوغرافي", code: "120204", stage: "B", notes: "" }
-                ],
-                "الدرجة الثانية": [
-                    { name: "مؤشرات الاداء والنتائج", code: "120301", stage: "A", notes: "" },
-                    { name: "ROI", code: "120302", stage: "B", notes: "" }
-                ],
-                "الدرجة الأولى": [
-                    { name: "عمليات الإدارة", code: "MA0101", stage: "M", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B" },
-                    { name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", stage: "M", notes: "" }
-                ]
-            },
             "مهندس تشغيل مياه": {
                 "الدرجة الثالثة": [
-                    { name: "التشغيل القياسي لمحطات الشرب", code: "010202", stage: "A", notes: "" },
-                    { name: "صيانة الشبكات", code: "010205", stage: "A", notes: "" },
-                    { name: "الفحص الظاهرى", code: "010209", stage: "A", notes: "" },
-                    { name: "اقتصاديات التشغيل", code: "010211", stage: "B", notes: "" },
-                    { name: "وحدات المياه النقالى", code: "010213", stage: "B", notes: "" },
-                    { name: "وصف مشاكل التشغيل", code: "010214", stage: "B", notes: "" }
+                    {name: "التشغيل القياسي لمحطات الشرب", code: "010202", version: "V2", stage: "A", notes: ""},
+                    {name: "صيانة الشبكات", code: "010205", version: "V2", stage: "A", notes: ""},
+                    {name: "الفحص الظاهرى", code: "010209", version: "V2", stage: "A", notes: ""},
+                    {name: "اقتصاديات التشغيل", code: "010211", version: "V2", stage: "B", notes: ""},
+                    {name: "وحدات المياه النقالى", code: "010213", version: "V1", stage: "B", notes: ""},
+                    {name: "وصف مشاكل التشغيل", code: "010214", version: "V2", stage: "B", notes: ""}
                 ],
                 "الدرجة الثانية": [
-                    { name: "اجهزه القياس", code: "010301", stage: "A", notes: "" },
-                    { name: "تكنولوجيا معالجة المياه الجوفية", code: "010302", stage: "A", notes: "" },
-                    { name: "ادارة المياه غير المحاسب عليها وتقليل الفاقد", code: "010306", stage: "B", notes: "" },
-                    { name: "تقييم المعدات الكهرو ميكانيكية", code: "010303", stage: "B", notes: "" },
-                    { name: "SCADA", code: "010304", stage: "B", notes: "" }
+                    {name: "اجهزه القياس", code: "010301", version: "V1", stage: "A", notes: ""},
+                    {name: "تكنولوجيا معالجة المياه الجوفية", code: "010302", version: "V2", stage: "A", notes: ""},
+                    {name: "ادارة المياه غير المحاسب عليها وتقليل الفاقد", code: "010306", version: "V2", stage: "B", notes: ""},
+                    {name: "تقييم المعدات الكهرو ميكانيكية", code: "010303", version: "V2", stage: "B", notes: ""},
+                    {name: "SCADA", code: "010304", version: "V2", stage: "B", notes: ""}
                 ],
                 "الدرجة الأولى": [
-                    { name: "عمليات الإدارة", code: "MA0101", stage: "M", notes: "" },
-                    { name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", stage: "M", notes: "" }
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "مهندس تشغيل صرف": {
+                "الدرجة الثالثة": [
+                    {name: "التصميم الهيدروليكى للشبكـات", code: "020207", version: "V1", stage: "A", notes: ""},
+                    {name: "التصميم الهيدروليكى للمحطات", code: "020208", version: "V1", stage: "A", notes: ""},
+                    {name: "المواصفات الفنية للمعدات", code: "020206", version: "", stage: "A", notes: ""},
+                    {name: "نظم المعالجة", code: "020209", version: "V1", stage: "B", notes: ""},
+                    {name: "مشاكل التشغيل", code: "020211", version: "V1", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "SCADA", code: "020307", version: "V1", stage: "A", notes: ""},
+                    {name: "أجهزة القياس والتحكم", code: "020306", version: "V1", stage: "A", notes: ""},
+                    {name: "المعدات الحديثة للتطهير", code: "020303", version: "V1", stage: "B", notes: ""},
+                    {name: "معايير الصرف الصحي للقرى الصغيرة", code: "020301", version: "V1", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "مهندس صيانه كهربائية": {
+                "الدرجة الثالثة": [
+                    {name: "لوحات الجهد المنخفض", code: "030201", version: "V2", stage: "A", notes: ""},
+                    {name: "لوحات الجهد المتوسط", code: "030202", version: "V2", stage: "A", notes: ""},
+                    {name: "PLC", code: "030210", version: "V2", stage: "A", notes: ""},
+                    {name: "صيانة المحركات الكهربائية", code: "030205", version: "V2", stage: "B", notes: ""},
+                    {name: "المحولات", code: "030207", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "الدراسات الفنية والحسابات الكهربائية", code: "030301", version: "V2", stage: "A", notes: ""},
+                    {name: "SCADA", code: "030304", version: "V2", stage: "A", notes: ""},
+                    {name: "بوادئ الحركة", code: "030303", version: "V2", stage: "B", notes: ""},
+                    {name: "المشغلات", code: "030302", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "مهندس صيانه ميكانيكية": {
+                "الدرجة الثالثة": [
+                    {name: "صيانة المعدات الميكانيكية", code: "040202", version: "V1", stage: "A", notes: ""},
+                    {name: "تنفيذ الصيانات المختلفة للمولدات", code: "040205", version: "V1", stage: "A", notes: ""},
+                    {name: "الزيوت والشحوم", code: "", version: "V1", stage: "B", notes: ""},
+                    {name: "صيانة الطلمبات", code: "", version: "V1", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "اجهزة الطرق المائى", code: "", version: "V1", stage: "A", notes: ""},
+                    {name: "النظم الهيدورليكية والنيوماتيكية", code: "", version: "V1", stage: "A", notes: ""},
+                    {name: "احتياجات الصيانة", code: "040307", version: "V1", stage: "B", notes: ""},
+                    {name: "برامج الصيانة", code: "040306", version: "V1", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "مهندس مشروعات": {
+                "الدرجة الثالثة": [
+                    {name: "تصميم محطات مياه الشرب والشبكات", code: "010212", version: "V1", stage: "A", notes: "من مهندس تشغيل مياه درجة 3 - عدا شركتى صرف القاهرة والاسكندرية"},
+                    {name: "التصميم الهيدروليكى لشبكـات الانحدار", code: "020207", version: "V1", stage: "A", notes: "من مهندس تشغيل صرف درجة3 - عدا شركتى مياه القاهرة والاسكندرية"},
+                    {name: "مراحل وخطوات تنفيذ المشروعات", code: "050101", version: "V2", stage: "B", notes: "من مهندس مشروعات حديث"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "إدارة مشروعات", code: "050301", version: "V1", stage: "A", notes: ""},
+                    {name: "تنفيذ شبكات", code: "050302", version: "V1", stage: "B", notes: "ما عدا شركتي مياه القاهرة والاسكندرية"},
+                    {name: "تقييم المعدات الكهروميكانيكية", code: "010303", version: "V2", stage: "B", notes: "من مهندس تشغيل مياه درجة ثانية"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "مهندس تخطيط و تطوير": {
+                "الدرجة الثالثة": [
+                    {name: "GIS", code: "060202", version: "V2", stage: "A", notes: "الامتحان 3 أسئلة فى 3 تخصصات وهيحل 2 بس من ال3"},
+                    {name: "تحليل هيدروليكى", code: "060201", version: "V2", stage: "A", notes: ""},
+                    {name: "مخطط عام", code: "060203", version: "V2", stage: "A", notes: ""},
+                    {name: "GIS_2", code: "060302", version: "V2", stage: "B", notes: "الامتحان عملى على التخصص"},
+                    {name: "تحليل هيدروليكى_2", code: "060301", version: "V2", stage: "B", notes: "الامتحان عملى على التخصص"},
+                    {name: "مخطط عام_2", code: "060303", version: "V2", stage: "B", notes: "الامتحان ورقي على التخصص"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "GIS", code: "060202", version: "V2", stage: "A", notes: "الامتحان 3 أسئلة فى 3 تخصصات وهيحل 2 بس من ال3"},
+                    {name: "تحليل هيدروليكى", code: "060201", version: "V2", stage: "A", notes: ""},
+                    {name: "مخطط عام", code: "060203", version: "V2", stage: "A", notes: ""},
+                    {name: "GIS_2", code: "060302", version: "V2", stage: "B", notes: "الامتحان عملى على التخصص"},
+                    {name: "تحليل هيدروليكى_2", code: "060301", version: "V2", stage: "B", notes: "الامتحان عملى على التخصص"},
+                    {name: "مخطط عام_2", code: "060303", version: "V2", stage: "B", notes: "الامتحان ورقي على التخصص"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "اخصائي GIS": {
+                "درجه ثالثة وثانيه": [
+                    {name: "GIS", code: "060202", version: "V2", stage: "A", notes: ""},
+                    {name: "GIS_2", code: "060302", version: "V2", stage: "B", notes: "الامتحان عملي على التخصص"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
                 ]
             },
             "كيميائي مياه": {
                 "الدرجة الثالثة": [
-                    { name: "Water Treatment Technologies", code: "090201", stage: "A", notes: "" },
-                    { name: "تجارب التشغيل", code: "090202", stage: "A", notes: "" },
-                    { name: "Physical and Chemical Analysis", code: "090205", stage: "A", notes: "" },
-                    { name: "Bacteriology", code: "090105", stage: "B", notes: "" }
+                    {name: "Water Treatment Technologies", code: "090201", version: "V2", stage: "A", notes: ""},
+                    {name: "تجارب التشغيل", code: "090202", version: "V2", stage: "A", notes: ""},
+                    {name: "Physical and Chemical Analysis", code: "090205", version: "V2", stage: "A", notes: ""},
+                    {name: "Bacteriology", code: "090105", version: "V2", stage: "B", notes: ""},
+                    {name: "Protozoa", code: "090207", version: "V2", stage: "B", notes: ""},
+                    {name: "Algae", code: "090208", version: "V2", stage: "B", notes: ""}
                 ],
                 "الدرجة الثانية": [
-                    { name: "Water Treatment Solving Problems", code: "090301", stage: "A", notes: "65%" },
-                    { name: "GLP in water treatment plants", code: "090302", stage: "A", notes: "35%" }
+                    {name: "Water Treatment Solving Problems", code: "090301", version: "V2", stage: "A", notes: "65%"},
+                    {name: "GLP in water treatment plants", code: "090302", version: "V2", stage: "A", notes: "35%"},
+                    {name: "Water Safety Plan", code: "090303", version: "V2", stage: "B", notes: "25%"},
+                    {name: "Laboratory design and equipment", code: "090304", version: "V2", stage: "B", notes: "75%"}
                 ],
                 "الدرجة الأولى": [
-                    { name: "عمليات الإدارة", code: "MA0101", stage: "M", notes: "" }
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "كيميائى صرف": {
+                "الدرجة الثالثة": [
+                    {name: "تكنولوجيات المعالجة_1", code: "100201", version: "V2", stage: "A", notes: ""},
+                    {name: "تكنولوجيات المعالجة_2", code: "100202", version: "V2", stage: "A", notes: ""},
+                    {name: "تجارب التشغيل", code: "100203", version: "V2", stage: "A", notes: ""},
+                    {name: "التحاليل الكيميائية", code: "100205", version: "V2", stage: "B", notes: ""},
+                    {name: "التحاليل الميكروبيولوجية", code: "100206", version: "V2", stage: "B", notes: ""},
+                    {name: "الصرف الصناعى وآليات المعالجة", code: "100207", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "استخدام نتائج التحاليل للتحكم في تشغيل محطات معالجة الصرف الصحي", code: "100301", version: "V2", stage: "A", notes: "75%"},
+                    {name: "المعالجة الثلاثية", code: "100302", version: "V2", stage: "A", notes: "25%"},
+                    {name: "الجودة في محطات مياه الصرف", code: "100304", version: "V2", stage: "B", notes: "40%"},
+                    {name: "المواصفات الفنية للمعامل و الاجهزة", code: "100305", version: "V2", stage: "B", notes: "60%"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "اخصائى موارد بشرية وادارية": {
+                "الدرجة الثالثة": [
+                    {name: "اللائحة والاجراءات _جزء 1", code: "110201", version: "V2", stage: "A", notes: ""},
+                    {name: "اللائحة والاجراءات _جزء 2", code: "110203", version: "V2", stage: "A", notes: ""},
+                    {name: "الاجور والموازنة", code: "110202", version: "V2", stage: "B", notes: ""},
+                    {name: "التأمينات والمعاشات", code: "110204", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "الهياكل التنظيمية", code: "110301", version: "V2", stage: "A", notes: ""},
+                    {name: "أخلاقيات العمل", code: "110302", version: "V2", stage: "A", notes: ""},
+                    {name: "تقييم الأداء الوظيفى", code: "110303", version: "V2", stage: "B", notes: ""},
+                    {name: "مؤشرات الاداء والنتائج", code: "120301", version: "V2", stage: "B", notes: "من اخصائي تدريب الدرجه الثانيه"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "اخصائى تدريب": {
+                "الدرجة الثالثة": [
+                    {name: "الاحتياجات التدريبية", code: "120201", version: "V2", stage: "A", notes: ""},
+                    {name: "جودة التدريب", code: "120202", version: "V2", stage: "A", notes: ""},
+                    {name: "تنفيذ التدريب", code: "120203", version: "V2", stage: "B", notes: ""},
+                    {name: "التوثيق الفوتوغرافي", code: "120204", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "مؤشرات الاداء والنتائج", code: "120301", version: "V2", stage: "A", notes: ""},
+                    {name: "ROI", code: "120302", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "اخصائى خدمه عملاء ومشتركين": {
+                "الدرجة الثالثة": [
+                    {name: "الدورة المستندية للخدمات الجماهيرية", code: "130201", version: "V2", stage: "A", notes: ""},
+                    {name: "الدورة المستندية للإشتراكات", code: "130202", version: "V2", stage: "A", notes: ""},
+                    {name: "المصالح الحكومية وحسابات كبار المشتركين", code: "130301", version: "V2", stage: "B", notes: "من الدرجة الثانية"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "التعريفة ومركز الاصدار", code: "130203", version: "V1", stage: "A", notes: ""},
+                    {name: "التسويق", code: "130304", version: "V1", stage: "A", notes: ""},
+                    {name: "التطبيقات التجارية", code: "130303", version: "V1", stage: "B", notes: ""},
+                    {name: "المخالفات والخلسة", code: "130302", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "أخصائي زراعي": {
+                "الدرجة الثالثة": [
+                    {name: "نظم الرى_جزء_1", code: "150101", version: "V2", stage: "A", notes: "نفس مادة حديث"},
+                    {name: "التسميد والمكافحة", code: "150201", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "نظم الرى_جزء 2", code: "150301", version: "V2", stage: "A", notes: ""},
+                    {name: "انتاج وانضاج الحمأة", code: "150302", version: "V2", stage: "B", notes: "ما عدا مياه القاهرة ومياه الاسكندرية"},
+                    {name: "نباتات الزينة", code: "150102", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "سكرتير تنفيذي": {
+                "الدرجة الثالثة": [
+                    {name: "كتابة التقارير", code: "MA0108", version: "V2", stage: "A", notes: ""},
+                    {name: "سكرتير تنفيذى1", code: "160201", version: "V2", stage: "A", notes: ""},
+                    {name: "إدارة الوقت", code: "MA0104", version: "V2", stage: "B", notes: ""},
+                    {name: "البروتوكولات", code: "170301", version: "V2", stage: "B", notes: "من اخصائي علاقات عامة وتوعية"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "سكرتير تنفيذى2", code: "160301", version: "V2", stage: "A", notes: ""},
+                    {name: "إدارة الاجتماعات", code: "MA0205", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "أخصائي علاقات عامة وتوعية": {
+                "الدرجة الثالثة": [
+                    {name: "التوعية وتعبئة المجتمع", code: "170201", version: "V2", stage: "A", notes: ""},
+                    {name: "الحملات الاعلامية", code: "170202", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "البروتوكولات", code: "170301", version: "V2", stage: "A", notes: ""},
+                    {name: "التسويق الرقمي", code: "170302", version: "V2", stage: "B", notes: ""},
+                    {name: "بحوث الراي", code: "170303", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "أخصائي امن": {
+                "الدرجة الثالثة": [
+                    {name: "تحسين أداء أخصائى الأمن", code: "180201", version: "V2", stage: "A", notes: ""},
+                    {name: "العلامات الارشادية", code: "190204", version: "V2", stage: "B", notes: "من أخصائى سلامة درجة ثالثة"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "تحسين أداء أخصائى الأمن", code: "180201", version: "V2", stage: "A", notes: "نفس مادة الدرجة الثالثة"},
+                    {name: "إدارة خطط الطوارئ والأزمات", code: "190303", version: "V2", stage: "B", notes: "من أخصائى سلامة درجة ثانية"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "أخصائي سلامة وصحة مهنية": {
+                "الدرجة الثالثة": [
+                    {name: "العلامات الإرشادية", code: "190204", version: "V2", stage: "A", notes: ""},
+                    {name: "إسعافات أولية", code: "190207", version: "V2", stage: "A", notes: ""},
+                    {name: "تداول وتخزين الكلور", code: "190205", version: "V2", stage: "A", notes: ""},
+                    {name: "الحريق", code: "190206", version: "V2", stage: "B", notes: ""},
+                    {name: "تقييم المخاطر", code: "190202", version: "V2", stage: "B", notes: ""},
+                    {name: "الإحصائيات وتحليلها", code: "190203", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "الحفر", code: "190304", version: "V2", stage: "A", notes: ""},
+                    {name: "طرق قياس الخطر", code: "190301", version: "V2", stage: "A", notes: ""},
+                    {name: "الطوارئ والأزمات", code: "190303", version: "V2", stage: "B", notes: ""},
+                    {name: "مواصفات المعدات", code: "190302", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "محاسب مالى": {
+                "الدرجة الثالثة": [
+                    {name: "تحليل مالي 1", code: "200207", version: "V2", stage: "A", notes: ""},
+                    {name: "تكاليف", code: "200201", version: "V2", stage: "A", notes: ""},
+                    {name: "الإيرادات والمصروفات", code: "200101", version: "V2", stage: "B", notes: ""},
+                    {name: "موازنة", code: "200206", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "إجراءات إدارة العقد", code: "200304", version: "V2", stage: "A", notes: ""},
+                    {name: "تحليل مالي 2", code: "200302", version: "V2", stage: "A", notes: ""},
+                    {name: "الأصول والإلتزامات", code: "200205", version: "V2", stage: "B", notes: ""},
+                    {name: "الإتجاهات الحديثة في المحاسبة عن تكاليف", code: "200301", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "اخصائي عقود ومشتريات (مؤهل غير محاسبي)": {
+                "الدرجة الثالثة والثانية": [
+                    {name: "مقدمة عن العقود والمشتريات", code: "200102", version: "V2", stage: "A", notes: ""},
+                    {name: "طرق وإجراءات الطرح والترسية", code: "200202", version: "V2", stage: "A", notes: ""},
+                    {name: "إجراءات إدارة العقد", code: "200304", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "محاسب تجارى": {
+                "الدرجة الثالثة": [
+                    {name: "الدورة المستندية للخدمات الجماهيرية", code: "130201", version: "V2", stage: "A", notes: "من مسار اخصائي خدمة عملاء ومشتركين"},
+                    {name: "الدورة المستندية للإشتراكات", code: "130202", version: "V2", stage: "A", notes: "من مسار اخصائي خدمة عملاء ومشتركين"},
+                    {name: "المصالح الحكومية وحسابات كبار المشتركين", code: "130301", version: "V2", stage: "B", notes: "من مسار اخصائي خدمة عملاء ومشتركين"},
+                    {name: "موازنة", code: "200206", version: "V2", stage: "B", notes: "من محاسب مالي"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "التعريفة ومركز الاصدار", code: "130203", version: "V1", stage: "A", notes: "من مسار اخصائي خدمة عملاء ومشتركين"},
+                    {name: "التسويق", code: "130304", version: "V1", stage: "A", notes: ""},
+                    {name: "التطبيقات التجارية", code: "130303", version: "V1", stage: "B", notes: "من مسار اخصائي خدمة عملاء ومشتركين"},
+                    {name: "المخالفات والخلسة", code: "130302", version: "V2", stage: "B", notes: "من مسار اخصائي خدمة عملاء ومشتركين"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "مهندس تحلية": {
+                "الدرجة الثالثة": [
+                    {name: "طرق ومبادئ التحلية", code: "400201", version: "V2", stage: "A", notes: ""},
+                    {name: "التشغيل القياسى للتحلية", code: "400202", version: "V2", stage: "A", notes: ""},
+                    {name: "منظومة الضغط العالى", code: "400203", version: "V2", stage: "B", notes: ""},
+                    {name: "الشروط البيئية للتحلية", code: "400204", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "تكنولجيا التحلية والأغشية", code: "400301", version: "V2", stage: "A", notes: ""},
+                    {name: "أجهزة القياس والتحكم", code: "400302", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "كيميائي تحلية": {
+                "الدرجة الثالثة": [
+                    {name: "طرق ومبادئ التحلية", code: "400201", version: "V2", stage: "A", notes: "من مهندس تحلية"},
+                    {name: "التشغيل القياسي لمحطات التحلية RO", code: "410201", version: "V2", stage: "A", notes: ""},
+                    {name: "الغسيل الكيميائي لمحطات التحلية وتجارب التشغيل", code: "410202", version: "V2", stage: "B", notes: ""},
+                    {name: "الجودة وإجراءات السلامة في المعامل", code: "410206", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "Laboratory design and equipment", code: "090304", version: "V2", stage: "A", notes: "من كيميائي مياه"},
+                    {name: "إجراءات حل المشكلات بمحطات التحلية", code: "410305", version: "V2", stage: "A", notes: ""},
+                    {name: "Water Safety Plan", code: "090303", version: "V2", stage: "B", notes: "من كيميائي مياه"},
+                    {name: "تقييم الأثر البيئي EIA لمحطات التحلية", code: "410304", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "اخصائي تحليل بيانات": {
+                "الدرجة الثالثة": [
+                    {name: "مبادئ الإحصاء", code: "420201", version: "V2", stage: "A", notes: ""},
+                    {name: "برنامج Excel (مبادئ)", code: "420202", version: "V2", stage: "A", notes: "التدريب والتقييم عملي"},
+                    {name: "احصاء متقدم", code: "420204", version: "V2", stage: "B", notes: ""},
+                    {name: "برنامج Excel (متقدم)", code: "420205", version: "V2", stage: "B", notes: "التدريب والتقييم عملي"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "اعداد الخطط المرحلية", code: "420302", version: "V2", stage: "A", notes: "التدريب والتقييم عملي ونظري"},
+                    {name: "اعداد التقارير", code: "MA0108", version: "V2", stage: "B", notes: "من المسار الإداري"},
+                    {name: "Power BI", code: "420303", version: "V2", stage: "B", notes: "التدريب والتقييم عملي"}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
+                ]
+            },
+            "العاملين بإدارات النزاهة": {
+                "الدرجة الثالثة": [
+                    {name: "مفهوم النزاهة وتحليل المخاطر", code: "420207", version: "V2", stage: "A", notes: ""},
+                    {name: "مهارات التواصل الفعال", code: "420208", version: "V2", stage: "A", notes: ""},
+                    {name: "إعداد تقارير دعم النزاهة", code: "420209", version: "V2", stage: "A", notes: ""},
+                    {name: "مهارات العمل مع الفريق", code: "420210", version: "V2", stage: "B", notes: ""},
+                    {name: "منهجية جمع وتحليل البيانات", code: "420211", version: "V2", stage: "B", notes: ""},
+                    {name: "مهارات العرض والتقديم", code: "420212", version: "V2", stage: "B", notes: ""},
+                    {name: "تنسيق وتنظيم ورش العمل", code: "420213", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "مبادئ التخطيط وخطط دعم النزاهة", code: "420304", version: "V2", stage: "A", notes: ""},
+                    {name: "آليات المتابعة والتقييم ومؤشرات الأداء", code: "420305", version: "V2", stage: "A", notes: ""},
+                    {name: "إدارة وقيادة فرق العمل", code: "420306", version: "V2", stage: "A", notes: ""},
+                    {name: "مهارات التفاوض وإدارة الوقت", code: "420307", version: "V2", stage: "B", notes: ""},
+                    {name: "إدارة التغيير", code: "420308", version: "V2", stage: "B", notes: ""},
+                    {name: "قواعد إدارة الاجتماعات", code: "420309", version: "V2", stage: "B", notes: ""}
+                ],
+                "الدرجة الأولى": [
+                    {name: "عمليات الإدارة", code: "MA0101", version: "M", stage: "", notes: "المتميزين من الدرجة الثالثة A&B + المتميزين من الدرجة الثانية B"},
+                    {name: "الخطط التشغيلية ومؤشرات الأداء", code: "MA0102", version: "M", stage: "", notes: ""}
                 ]
             },
             "فنى تشغيل مياه": {
                 "الدرجة الرابعة": [
-                    { name: "أساليب التعامل مع الكيماويات", code: "230301", stage: "v2", notes: "من الدرجة الثالثة" },
-                    { name: "التشغيل القياسي لمحطات مياه الشرب", code: "230203", stage: "", notes: "" }
+                    {name: "أساليب التعامل مع الكيماويات", code: "230301", version: "V2", stage: "", notes: "من الدرجة الثالثة"},
+                    {name: "التشغيل القياسي لمحطات مياه الشرب", code: "230203", version: "", stage: "", notes: "يتم تدريبها مع أساليب التعامل مع الكيماويات في أسبوع واحد"},
+                    {name: "التشغيل القياسي للشبكات", code: "230202", version: "V2", stage: "", notes: ""},
+                    {name: "أنواع المواسير والقطع الخاصة", code: "230201", version: "V2", stage: "", notes: "يتم تدريبها مع أساليب التعامل مع التشغيل القياسي للشبكات في أسبوع واحد"}
                 ],
                 "الدرجة الثالثة": [
-                    { name: "مشاكل التشغيل", code: "230302", stage: "v2", notes: "" }
+                    {name: "مشاكل التشغيل", code: "230302", version: "V2", stage: "", notes: ""},
+                    {name: "اصلاح الشبكات", code: "230309", version: "V2", stage: "", notes: ""}
                 ],
                 "الدرجة الثانية": [
-                    { name: "الفاقد والتسرب", code: "230402", stage: "v2", notes: "" }
+                    {name: "الفاقد والتسرب", code: "230402", version: "V2", stage: "", notes: ""},
+                    {name: "أجهزة القياس2", code: "230403", version: "V2", stage: "", notes: ""}
+                ]
+            },
+            "فنى تشغيل صرف": {
+                "الدرجة الرابعة": [
+                    {name: "اساسيات المعالجة للصرف الصحي", code: "240201", version: "V1", stage: "", notes: ""},
+                    {name: "أساسيات تشغيل المحطات", code: "240203", version: "V1", stage: "", notes: "الجزء الخاص بالصرف فقط حتى ص106"},
+                    {name: "تطهير شبكات الصرف", code: "240204", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "مصادر المخلفات", code: "240305", version: "V1", stage: "", notes: ""},
+                    {name: "معالجة الحماة", code: "240306", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "معدات الشبكات", code: "240401", version: "V1", stage: "", notes: ""},
+                    {name: "تفسير نتائج المعمل", code: "240402", version: "V1", stage: "", notes: ""}
+                ]
+            },
+            "فني مشروعات": {
+                "الدرجة الرابعة": [
+                    {name: "انواع المواسير", code: "230202", version: "V2", stage: "", notes: "من فني تشغيل مياه درجة 4 - ما عدا شركتي صرف القاهرة والإسكندرية"},
+                    {name: "أجهزة المساحة", code: "230401", version: "V2", stage: "", notes: "من فنى تشغيل مياه درجة 2"},
+                    {name: "اصلاح الشبكات وتركيب الوصلات", code: "230309", version: "V2", stage: "", notes: "من فنى تشغيل مياه درجة 3 - عدا شركتى صرف القاهرة والإسكندرية"}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "الوصلات المنزلية", code: "240302", version: "V1", stage: "", notes: "من فني تشغيل صرف درجة 3 - عدا شركتى مياه القاهرة والإسكندرية"},
+                    {name: "أجهزة المساحة", code: "230401", version: "V2", stage: "", notes: "من فني تشغيل مياه درجة 2"},
+                    {name: "الفاقد والتسرب", code: "230402", version: "V2", stage: "", notes: "من فني تشغيل مياه درجة 2 - عدا شركتي صرف القاهرة والإسكندرية"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "أجهزة القياس2", code: "230403", version: "V2", stage: "", notes: "من فنى تشغيل مياه درجة 2 - عدا شركتى صرف القاهرة والإسكندرية"},
+                    {name: "تنفيذ شبكات", code: "050302", version: "V2", stage: "", notes: "من مهندس مشروعات درجة 2 - عدا شركتى مياه القاهرة والإسكندرية"}
+                ]
+            },
+            "فني مساحه": {
+                "الدرجة الرابعة": [
+                    {name: "المساحة الارضية", code: "460201", version: "V2", stage: "", notes: ""},
+                    {name: "أجهزة المساحة 1", code: "240207", version: "V2", stage: "", notes: "من فني تشغيل صرف درجة 4"}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "نظم المعلومات الجغرافية 1", code: "460302", version: "V2", stage: "", notes: ""},
+                    {name: "أجهزة المساحة 2", code: "230401", version: "V2", stage: "", notes: "من فني تشغيل مياه درجة 2"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "الفاقد و التسرب", code: "230402", version: "V2", stage: "", notes: "من فني تشغيل مياه درجة 3"},
+                    {name: "أجهزة القياس 2", code: "230403", version: "V2", stage: "", notes: "من فني تشغيل مياه درجة 2"}
+                ]
+            },
+            "فنى صيانة ميكانيكا": {
+                "الدرجة الرابعة": [
+                    {name: "صيانة المعدات", code: "270202", version: "V1", stage: "", notes: ""},
+                    {name: "الطلمبات", code: "270207", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "مهارات الصيانة", code: "270303", version: "V1", stage: "", notes: ""},
+                    {name: "المولدات", code: "270306", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "النظم الهيدروليكية", code: "270401", version: "V1", stage: "", notes: ""}
+                ]
+            },
+            "فنى صيانة كهرباء": {
+                "الدرجة الرابعة": [
+                    {name: "التركيبات الكهربية", code: "280201", version: "V2", stage: "", notes: ""},
+                    {name: "دوائر التحكم الالي وتتبع الاعطال", code: "280203", version: "V2", stage: "", notes: ""},
+                    {name: "المحركات الكهربائية", code: "280204", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "الجهد المتوسط", code: "280301", version: "V2", stage: "", notes: ""},
+                    {name: "صيانة المحولات", code: "280304", version: "V2", stage: "", notes: ""},
+                    {name: "الصيانة الكهربائية للمولدات", code: "28305", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "المخططات الهندسية", code: "280401", version: "V2", stage: "", notes: ""},
+                    {name: "إجراءات الصيانة القياسية", code: "280402", version: "V2", stage: "", notes: ""}
+                ]
+            },
+            "فني حملة": {
+                "الدرجة الرابعة": [
+                    {name: "العدد والأجهزة", code: "290201", version: "V2", stage: "", notes: ""},
+                    {name: "أنواع المركبات", code: "290202", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "الفحص الفنى", code: "290305", version: "V2", stage: "", notes: ""},
+                    {name: "الصيانات الوقائية", code: "290306", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "منظومة الفرامل", code: "290401", version: "V2", stage: "", notes: ""},
+                    {name: "هيدروليك متقدمة", code: "290402", version: "V1", stage: "", notes: ""}
+                ]
+            },
+            "فنى عدادات": {
+                "الدرجة الرابعة": [
+                    {name: "قياس المياه وأنواع العدادات", code: "300101", version: "V1", stage: "", notes: "من 6 شهور"},
+                    {name: "صيانة العدادات", code: "300201", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "قياس المياه وأنواع العدادات", code: "300101", version: "V1", stage: "", notes: "من 6 شهور"},
+                    {name: "صيانة العدادات", code: "300201", version: "V1", stage: "", notes: "من الدرجة الرابعة"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "قياس المياه وأنواع العدادات", code: "300101", version: "V1", stage: "", notes: "من 6 شهور"},
+                    {name: "صيانة العدادات", code: "300201", version: "V2", stage: "", notes: "من الدرجة الرابعة"}
+                ]
+            },
+            "فنى سلامة وصحة مهنية": {
+                "الدرجة الرابعة": [
+                    {name: "التشريعات والقوانين", code: "190201", version: "V2", stage: "", notes: "من اخصائي سلامة وصحه مهنية"},
+                    {name: "العلامات الإرشادية", code: "190204", version: "V2", stage: "", notes: ""},
+                    {name: "إسعافات أولية", code: "190207", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "تداول وتخزين الكلور", code: "190205", version: "V2", stage: "", notes: ""},
+                    {name: "الحريق", code: "190206", version: "V2", stage: "", notes: ""},
+                    {name: "الحفر", code: "190304", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "الطوارئ والأزمات", code: "190303", version: "V2", stage: "", notes: ""},
+                    {name: "طرق قياس الخطر", code: "190301", version: "V2", stage: "", notes: ""}
+                ]
+            },
+            "أمين مخزن": {
+                "الدرجة الرابعة": [
+                    {name: "لائحه المخازن", code: "320101", version: "V2", stage: "", notes: "من 6 شهور"},
+                    {name: "الدورة المستندية", code: "320201", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "لائحه المخازن", code: "320101", version: "V2", stage: "", notes: "من 6 شهور"},
+                    {name: "الدورة المستندية", code: "320201", version: "V2", stage: "", notes: "من الدرجة الرابعة"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "لائحه المخازن", code: "320101", version: "V2", stage: "", notes: "من 6 شهور"},
+                    {name: "الدورة المستندية", code: "320201", version: "V1", stage: "", notes: "من الدرجة الرابعة"}
+                ]
+            },
+            "فني معمل مياه": {
+                "الدرجة الرابعة": [
+                    {name: "جمع العينات", code: "330202", version: "V1", stage: "", notes: ""},
+                    {name: "القياسات المعملية", code: "330203", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "الكلور والشبه", code: "330303", version: "V1", stage: "", notes: ""},
+                    {name: "الإختبارات الميكروبولوجية", code: "330302", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "تنقية مياه الشرب", code: "330402", version: "V1", stage: "", notes: ""},
+                    {name: "تطهير الخزانات", code: "33403", version: "V1", stage: "", notes: ""}
+                ]
+            },
+            "فنى معمل صرف": {
+                "الدرجة الرابعة": [
+                    {name: "اجراءات الأمن والسلامة داخل المعامل", code: "430201", version: "V1", stage: "", notes: ""},
+                    {name: "التعامل مع الادوات والزجاجيات المعملية", code: "430202", version: "V1", stage: "", notes: ""},
+                    {name: "جمع وتداول عينات", code: "430203", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "المراجعة البينية للأجهزة الحقلية والأجهزة البسيطة وتسجيل القراءات", code: "430301", version: "V1", stage: "", notes: ""},
+                    {name: "تجهيز وتحضير المحاليل الكيميائية والوسائط البكتيرية", code: "430302", version: "V1", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "الفحص الظاهرى لمراحل المعالجة فى محطات الصرف الصحى", code: "430401", version: "V1", stage: "", notes: ""},
+                    {name: "تجارب التشغيل البسيطة وحسابات التحكم في التشغيل", code: "430402", version: "V2", stage: "", notes: ""}
+                ]
+            },
+            "فنى زراعى": {
+                "الدرجة الرابعة": [
+                    {name: "نباتات الزينة", code: "150102", version: "V2", stage: "", notes: "من اخصائي زراعي"}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "تسميد ومكافحة", code: "150201", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "انضاج الحمأة", code: "150302", version: "V2", stage: "", notes: ""}
+                ]
+            },
+            "سكرتارية": {
+                "الدرجة الرابعة": [
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"},
+                    {name: "مهارات السكرتارية", code: "350101", version: "V2", stage: "", notes: "من سكرتارية 6 شهور"}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"},
+                    {name: "مهارات السكرتارية", code: "350101", version: "V2", stage: "", notes: "من سكرتارية 6 شهور"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"},
+                    {name: "مهارات السكرتارية", code: "350101", version: "V2", stage: "", notes: "من سكرتارية 6 شهور"}
+                ]
+            },
+            "كاتب ومدخل بيانات": {
+                "الدرجة الرابعة": [
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: ""},
+                    {name: "مهارات السكرتارية", code: "350101", version: "V2", stage: "", notes: "من سكرتارية 6 شهور"}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"},
+                    {name: "مهارات السكرتارية", code: "350101", version: "V2", stage: "", notes: "من سكرتارية 6 شهور"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"},
+                    {name: "مهارات السكرتارية", code: "350101", version: "V2", stage: "", notes: "من سكرتارية 6 شهور"}
+                ]
+            },
+            "مراقب امن": {
+                "الدرجة الرابعة": [
+                    {name: "تحسين أداء مراقب الأمن", code: "370201", version: "V2", stage: "", notes: ""},
+                    {name: "الحريق", code: "190206", version: "V2", stage: "", notes: "من اخصائي سلامة وصحة مهنية"}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "تحسين أداء مراقب الأمن", code: "370201", version: "V2", stage: "", notes: ""},
+                    {name: "العلامات الارشادية", code: "190204", version: "V2", stage: "", notes: "من اخصائي سلامة وصحة مهنية"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "تحسين أداء مراقب الأمن", code: "370201", version: "V1", stage: "", notes: ""},
+                    {name: "إدارة خطط الطوارئ والأزمات", code: "190303", version: "V2", stage: "", notes: "من اخصائي سلامة وصحة مهنية"}
+                ]
+            },
+            "امين خزينة": {
+                "الدرجة الرابعة": [
+                    {name: "إدارة الخزينة", code: "380101", version: "V1", stage: "", notes: "مادة 6 شهور"},
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "إدارة الخزينة", code: "380101", version: "V1", stage: "", notes: "مادة 6 شهور"},
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"}
+                ],
+                "الدرجة الثانية": [
+                    {name: "إدارة الخزينة", code: "380101", version: "V2", stage: "", notes: "مادة 6 شهور"},
+                    {name: "منظومة الوثائق", code: "360201", version: "V2", stage: "", notes: "من كاتب ومدخل بيانات درجة 4"}
+                ]
+            },
+            "قارئ ومحصل": {
+                "الدرجة الرابعة": [
+                    {name: "اعمال التحصيل", code: "390201", version: "V2", stage: "", notes: ""},
+                    {name: "اعمال القراءة", code: "390202", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثالثة": [
+                    {name: "اعمال التحصيل", code: "390201", version: "V2", stage: "", notes: ""},
+                    {name: "اعمال القراءة", code: "390202", version: "V2", stage: "", notes: ""}
+                ],
+                "الدرجة الثانية": [
+                    {name: "اعمال التحصيل", code: "390201", version: "V3", stage: "", notes: ""},
+                    {name: "اعمال القراءة", code: "390202", version: "V4", stage: "", notes: ""}
                 ]
             }
         };
-
-        const remainingTitles = [
-            "مهندس تشغيل صرف", "مهندس صيانه كهربائية", "مهندس صيانه ميكانيكية", "مهندس مشروعات", "مهندس تخطيط و تطوير", 
-            "اخصائي GIS", "كيميائى صرف", "اخصائى موارد بشرية وادارية", "اخصائى خدمه عملاء ومشتركين", 
-            "أخصائي زراعي", "سكرتير تنفيذي", "أخصائي علاقات عامة وتوعية", "أخصائي امن", "أخصائي سلامة وصحة مهنية",
-            "محاسب مالى", "محاسب تجارى", "مهندس تحلية", "كيميائي تحلية", "اخصائي تحليل بيانات", "فنى تشغيل صرف", "فني مشروعات", 
-            "فني مساحه", "فنى صيانة ميكانيكا", "فنى صيانة كهرباء", "فني حملة", "فنى عدادات", 
-            "فنى سلامة وصحة مهنية", "أمين مخزن", "فني معمل مياه", "فنى معمل صرف", "فنى زراعى", 
-            "سكرتارية", "كاتب ومدخل بيانات", "مراقب امن", "امين خزينة", "قارئ ومحصل"
-        ];
-
-        remainingTitles.forEach(title => {
-            if (!database[title]) {
-                database[title] = {
-                    "الدرجة الثالثة": [
-                        { name: `أساسيات وتطبيقات ${title}`, code: "GEN01", stage: "A", notes: "" },
-                        { name: "معايير السلامة والجودة التخصصية", code: "GEN02", stage: "B", notes: "" }
-                    ],
-                    "الدرجة الثانية": [
-                        { name: `التشغيل المتقدم في ${title}`, code: "GEN03", stage: "A", notes: "" }
-                    ],
-                    "الدرجة الأولى": [
-                        { name: "عمليات الإدارة والقيادة", code: "MA0101", stage: "M", notes: "" }
-                    ]
-                };
-            }
-        });
 
         // ===== Firebase =====
         const firebaseConfig = {
@@ -486,7 +1073,7 @@
         function initJobTitlesDropdown() {
             const select = document.getElementById("targetJobTitle");
             select.innerHTML = `<option value="">-- اختر المسمى الوظيفي (${Object.keys(database).length} مسمى متاح) --</option>`;
-            Object.keys(database).sort().forEach(job => {
+            Object.keys(database).forEach(job => { // نفس ترتيب ملف الحد الأدنى
                 const opt = document.createElement("option");
                 opt.value = job;
                 opt.textContent = job;
@@ -541,7 +1128,8 @@
                         </td>
                         <td class="p-3 font-semibold text-slate-800">${esc(c.name)}</td>
                         <td class="p-3 text-center font-mono text-blue-800 font-bold bg-slate-50">${esc(c.code) || '-'}</td>
-                        <td class="p-3 text-center"><span class="px-2 py-0.5 bg-slate-200 text-slate-700 text-xs rounded font-bold">${esc(c.stage) || 'General'}</span></td>
+                        <td class="p-3 text-center font-mono text-xs">${esc(c.version) || '-'}</td>
+                        <td class="p-3 text-center"><span class="px-2 py-0.5 bg-slate-200 text-slate-700 text-xs rounded font-bold">${esc(c.stage) || '-'}</span></td>
                         <td class="p-3 text-slate-500 text-xs">${esc(c.notes) || '-'}</td>
                     `;
                     tbody.appendChild(tr);
@@ -642,6 +1230,7 @@
                     <td class="p-2 border-l text-center font-bold">${idx + 1}</td>
                     <td class="p-2 border-l font-bold">${esc(c.name)}</td>
                     <td class="p-2 border-l text-center font-mono">${esc(c.code) || '-'}</td>
+                    <td class="p-2 border-l text-center font-mono">${esc(c.version) || '-'}</td>
                     <td class="p-2 border-l text-center">${esc(c.stage) || '-'}</td>
                     <td class="p-2">${esc(c.notes) || '-'}</td>
                 `;
@@ -821,11 +1410,12 @@
                 "م": j + 1,
                 "اسم المادة التدريبية": c.name,
                 "كود المادة": c.code,
+                "V": c.version || "",
                 "المرحلة": c.stage,
                 "ملاحظات": c.notes
             }));
             const courseWs = XLSX.utils.json_to_sheet(courseRows.length ? courseRows : [{ "م": "", "اسم المادة التدريبية": "لا توجد مواد" }]);
-            courseWs["!cols"] = [{ wch: 5 }, { wch: 45 }, { wch: 12 }, { wch: 10 }, { wch: 30 }];
+            courseWs["!cols"] = [{ wch: 5 }, { wch: 45 }, { wch: 12 }, { wch: 6 }, { wch: 10 }, { wch: 40 }];
 
             const workbook = XLSX.utils.book_new();
             workbook.Workbook = { Views: [{ RTL: true }] };
@@ -884,6 +1474,7 @@
                 "م المادة": j + 1,
                 "اسم المادة التدريبية": c.name,
                 "كود المادة": c.code,
+                "V": c.version || "",
                 "المرحلة": c.stage,
                 "ملاحظات": c.notes
             })));
