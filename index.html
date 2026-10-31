@@ -744,6 +744,7 @@
                     <td class="p-3 text-center font-bold text-emerald-700">${a.courses ? a.courses.length : 0}</td>
                     <td class="p-3 text-center whitespace-nowrap space-x-1 space-x-reverse">
                         <button onclick="viewApplicant('${a.id}')" class="px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded text-[10px] font-bold">عرض</button>
+                        <button onclick="exportApplicantExcel('${a.id}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold"><i class="fa-solid fa-file-excel"></i> Excel</button>
                         <button onclick="editApplicant('${a.id}')" class="px-2 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded text-[10px] font-bold">تعديل</button>
                         <button onclick="deleteApplicant('${a.id}')" class="px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-[10px] font-bold">حذف</button>
                     </td>
@@ -785,6 +786,54 @@
             } catch (err) {
                 alert("تعذر التعديل: " + err.message);
             }
+        }
+
+        function exportApplicantExcel(id) {
+            const a = applicantsCache.find(x => x.id === id);
+            if (!a) return;
+            const courses = a.courses || [];
+
+            // شيت 1: بيانات المتقدم بشكل عمودي (بند / قيمة) زي الاستمارة
+            const info = [
+                ["استمارة تسجيل اعتماد مدرب (2027 - 2029)", ""],
+                ["شركة مياه الشرب والصرف الصحي بكفر الشيخ - الإدارة العامة للتدريب", ""],
+                ["", ""],
+                ["البند", "البيان"],
+                ["رقم الطلب", a.refNo || a.id],
+                ["تاريخ ووقت التقديم", formatDate(a.createdAt)],
+                ["الاسم الكامل", a.fullName],
+                ["الرقم القومي", String(a.nationalId || "")],
+                ["الكود الوظيفي", String(a.employeeCode || "")],
+                ["رقم الهاتف", String(a.phoneNumber || "")],
+                ["الفرع / المنطقة", a.branchArea],
+                ["الوظيفة الحالية", a.currentJobTitle],
+                ["المسمى الوظيفي المستهدف", a.targetJobTitle],
+                ["الدرجة الوظيفية", a.jobDegree],
+                ["عدد المواد المسجلة", courses.length],
+                ["آخر تعديل", a.updatedAt ? formatDate(a.updatedAt) : "-"]
+            ];
+            const infoWs = XLSX.utils.aoa_to_sheet(info);
+            infoWs["!cols"] = [{ wch: 26 }, { wch: 45 }];
+            infoWs["!merges"] = [{ s: { r: 0, c: 0 }, e: { r: 0, c: 1 } }, { s: { r: 1, c: 0 }, e: { r: 1, c: 1 } }];
+
+            // شيت 2: المواد المسجلة
+            const courseRows = courses.map((c, j) => ({
+                "م": j + 1,
+                "اسم المادة التدريبية": c.name,
+                "كود المادة": c.code,
+                "المرحلة": c.stage,
+                "ملاحظات": c.notes
+            }));
+            const courseWs = XLSX.utils.json_to_sheet(courseRows.length ? courseRows : [{ "م": "", "اسم المادة التدريبية": "لا توجد مواد" }]);
+            courseWs["!cols"] = [{ wch: 5 }, { wch: 45 }, { wch: 12 }, { wch: 10 }, { wch: 30 }];
+
+            const workbook = XLSX.utils.book_new();
+            workbook.Workbook = { Views: [{ RTL: true }] };
+            XLSX.utils.book_append_sheet(workbook, infoWs, "بيانات المتقدم");
+            XLSX.utils.book_append_sheet(workbook, courseWs, "المواد المسجلة");
+
+            const safeName = String(a.fullName || "متقدم").replace(/[\\/:*?"<>|]/g, "").trim().replace(/\s+/g, "_");
+            XLSX.writeFile(workbook, `طلب_اعتماد_${safeName}_${a.refNo || a.id}.xlsx`);
         }
 
         function exportToExcel() {
