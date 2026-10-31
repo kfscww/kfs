@@ -90,7 +90,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">الرقم القومي (14 رقم) <span class="text-red-500">*</span></label>
-                            <input type="text" id="nationalId" maxlength="14" pattern="[0-9]{14}" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="الرقم القومي المكون من 14 رقم">
+                            <input type="text" id="nationalId" maxlength="14" pattern="[0-9]{14}" inputmode="numeric" dir="ltr" title="الرقم القومي 14 رقم" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="الرقم القومي المكون من 14 رقم">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">الكود الوظيفي / رقم الملف <span class="text-red-500">*</span></label>
@@ -98,7 +98,7 @@
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">رقم الهاتف / الواتساب <span class="text-red-500">*</span></label>
-                            <input type="tel" id="phoneNumber" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="01xxxxxxxx">
+                            <input type="tel" id="phoneNumber" maxlength="11" pattern="01[0-9]{9}" inputmode="numeric" dir="ltr" title="رقم موبايل مصري 11 رقم يبدأ بـ 01" required class="w-full px-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm transition" placeholder="01xxxxxxxx">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">المنطقة / الفرع التابع له <span class="text-red-500">*</span></label>
@@ -183,8 +183,8 @@
         <!-- Receipt Section -->
         <div id="receiptContainer" class="hidden space-y-6">
             <div class="no-print flex justify-between items-center bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
-                <button onclick="switchTab('register')" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold transition flex items-center gap-2">
-                    <i class="fa-solid fa-arrow-right"></i> العودة للنموذج
+                <button onclick="switchTab(receiptBackTab)" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg text-xs font-bold transition flex items-center gap-2">
+                    <i class="fa-solid fa-arrow-right"></i> <span id="receiptBackLabel">العودة للنموذج</span>
                 </button>
                 <button onclick="window.print()" class="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-sm font-bold shadow-md transition flex items-center gap-2">
                     <i class="fa-solid fa-print"></i> طباعة الإيصال الرسمي (A4)
@@ -448,10 +448,25 @@
         let applicantsCache = [];
         let adminListenerOn = false;
         let wantsAdmin = false;
+        let receiptBackTab = "register";
 
         document.addEventListener("DOMContentLoaded", () => {
             initJobTitlesDropdown();
+            // تحويل الأرقام العربية (٠١٢) لإنجليزية وحذف أي حروف من خانات الأرقام
+            ["nationalId", "phoneNumber"].forEach(id => {
+                document.getElementById(id).addEventListener("input", e => {
+                    e.target.value = toLatinDigits(e.target.value).replace(/\D/g, "");
+                });
+            });
         });
+
+        function toLatinDigits(s) {
+            return String(s).replace(/[٠-٩]/g, d => d.charCodeAt(0) - 0x0660).replace(/[۰-۹]/g, d => d.charCodeAt(0) - 0x06F0);
+        }
+
+        function withTimeout(promise, ms) {
+            return Promise.race([promise, new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), ms))]);
+        }
 
 
         function esc(v) {
@@ -574,19 +589,37 @@
             };
 
             const btn = document.getElementById("submitBtn");
+            const btnHtml = btn.innerHTML;
             btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> جاري إرسال الطلب...';
+            const newRef = applicantsRef.push();
             try {
-                await applicantsRef.push(formData);
+                await withTimeout(newRef.set(formData), 20000);
             } catch (err) {
                 console.error(err);
-                alert("تعذر إرسال الطلب، تأكد من اتصال الإنترنت وحاول مرة أخرى.");
+                // لو اتأخر الإرسال نلغيه عشان مايتبعتش لوحده بعدين ويتكرر
+                newRef.remove().catch(() => {});
+                alert(err.message === "timeout"
+                    ? "انتهت مهلة الإرسال، تأكد من اتصال الإنترنت وحاول مرة أخرى."
+                    : "تعذر إرسال الطلب، برجاء المحاولة مرة أخرى أو التواصل مع إدارة التدريب.");
                 return;
             } finally {
                 btn.disabled = false;
+                btn.innerHTML = btnHtml;
             }
 
             renderReceipt(formData);
+            receiptBackTab = "register";
             switchTab("receipt");
+            resetForm();
+        }
+
+        function resetForm() {
+            document.getElementById("trainerForm").reset();
+            onJobTitleChange();
+            currentSelectedCourses = [];
+            currentCourses = [];
+            updateSelectedBadge();
         }
 
         function renderReceipt(data) {
@@ -658,7 +691,8 @@
                 loadAdminData();
             }, err => {
                 console.error(err);
-                alert("لا توجد صلاحية لقراءة الطلبات. تأكد من قواعد قاعدة البيانات.");
+                adminListenerOn = false; // عشان يحاول تاني لما يفتح اللوحة مرة تانية
+                alert("لا توجد صلاحية لقراءة الطلبات. تأكد من نشر قواعد قاعدة البيانات (Rules) في Firebase.");
             });
         }
 
@@ -722,6 +756,7 @@
             const item = applicantsCache.find(a => a.id === id);
             if (!item) return;
             renderReceipt(item);
+            receiptBackTab = "admin";
             switchTab("receipt");
         }
 
@@ -739,10 +774,14 @@
             const item = applicantsCache.find(a => a.id === id);
             if (!item) return;
             const newName = prompt("تعديل اسم المتقدم:", item.fullName);
-            if (!newName || newName === item.fullName) return;
-            const newPhone = prompt("تعديل رقم الهاتف:", item.phoneNumber) || item.phoneNumber;
+            if (newName === null) return;
+            const newPhone = prompt("تعديل رقم الهاتف:", item.phoneNumber);
+            if (newPhone === null) return;
+            const name = newName.trim() || item.fullName;
+            const phone = toLatinDigits(newPhone).trim() || item.phoneNumber;
+            if (name === item.fullName && phone === item.phoneNumber) return;
             try {
-                await applicantsRef.child(id).update({ fullName: newName.trim(), phoneNumber: newPhone.trim(), updatedAt: Date.now() });
+                await applicantsRef.child(id).update({ fullName: name, phoneNumber: phone, updatedAt: Date.now() });
             } catch (err) {
                 alert("تعذر التعديل: " + err.message);
             }
@@ -834,7 +873,10 @@
             wantsAdmin = tab === "admin";
 
             if (tab === "register") document.getElementById("registerSection").classList.remove("hidden");
-            if (tab === "receipt") document.getElementById("receiptContainer").classList.remove("hidden");
+            if (tab === "receipt") {
+                document.getElementById("receiptBackLabel").textContent = receiptBackTab === "admin" ? "العودة للوحة المتابعة" : "العودة للنموذج";
+                document.getElementById("receiptContainer").classList.remove("hidden");
+            }
             if (tab === "admin") {
                 if (isAdmin) startAdminListener();
                 document.getElementById(isAdmin ? "adminSection" : "adminLoginSection").classList.remove("hidden");
